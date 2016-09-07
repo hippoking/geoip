@@ -11,3 +11,5 @@ https://www.centos.org/docs/5/html/Deployment_Guide-en-US/s1-bind-zone.html
 
 3) build configuration
 --disable-silent-rules  verbose build output (undo: "make V=0")
+
+4) monit service is required for monitoring
