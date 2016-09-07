@@ -1,0 +1,138 @@
+options => {
+    log_stats => 86400
+    tcp_timeout => 15 ; zonefile-style comment
+    include_optional_ns => true
+    zones_rfc1035_auto => true
+    listen => [ 127.0.0.1, 138.68.23.41]
+    http_listen => [ 127.0.0.1, 138.68.23.41]
+}
+
+plugins => {
+  reflect => {},
+  null => {},
+  static =>{
+  foo = 192.0.2.2
+  bar = 192.0.2.123
+}
+geoip => {
+   maps =>{
+   my_prod_map =>{
+   geoip2_db => /usr/local/share/GeoIP/GeoLite2-City.mmdb,
+   datacenters => [ dc-03, dc-02, dc-01, dc-fail],
+   map =>{
+     NA =>{
+             US => [dc-03,dc-02,dc-fail],
+                 CA => [dc-02,dc-03,dc-fail]
+         },
+         AS =>{
+             CN => [dc-01,dc-fail]
+         }
+   }
+   },
+   my_test_map =>{
+   geoip_db => /usr/local/share/GeoIP/GeoLiteCityv6.dat,
+   datacenters => [ dc-03, dc-02, dc-01, dc-fail],
+   map =>{
+     NA =>{
+             US => [dc-03,dc-02,dc-fail],
+                 CA => [dc-02,dc-03,dc-fail]
+         },
+         AS =>{
+             CN => [dc-01,dc-fail]
+         }
+   }
+   }
+   
+
+   },
+   resources =>{
+      prod_www =>{
+          map => my_prod_map,
+          service_types => up,
+          dcmap =>{
+        dc-03 => 50.116.57.237,
+        dc-02 => 184.75.222.21,
+        dc-01 => 125.39.85.254,
+        dc-fail =>      216.218.186.2
+          }
+          },
+	 test_www =>{
+          map => my_test_map,
+          service_types => up,
+          dcmap =>{
+        dc-03 => 8.8.8.8,
+        dc-02 => 8.8.4.4,
+        dc-01 => 4.2.2.1,
+        dc-fail =>      4.2.2.6
+          }
+          }
+   }
+}
+simplefo=>{
+   service_types => up,
+   pubwwwsfo =>{
+     primary => 198.35.26.96  # wikipedia US
+	 secondary => 91.198.174.192  # wikipedia Amsterdam
+   }
+    mixedsfo =>{
+	  addrs_v4 =>{
+	   primary => 192.0.2.1
+	   secondary => 192.0.2.100
+	  }
+	   addrs_v6 =>{
+          primary => 2001:DB8::1
+          secondary => 2001:DB8::100	   
+	   }
+	
+	}
+}
+multifo => {
+   up_thresh => 0.5
+   service_types => up
+   v4www =>{
+   lb01 => 8.8.8.8,
+   lb02 => 8.8.4.4,
+   lb03 => 4.2.2.1,
+   lb04 => 4.2.2.2,
+   lb05 => 4.2.2.3
+   }
+}
+weighted => {
+   multi = false #default
+   service_types => up
+   up_thresh => 0.5
+   corpwww =>{
+        lb01 = [ www.google.com., 99 ]
+        lb02 = [ www.yahoo.com., 15 ]
+        lb03 = [ www.twitter.com, 1 ]   
+   }
+   mcorpwww =>{
+        lb01 = [ www.google.com., 30 ]
+        lb02 = [ www.yahoo.com., 40 ]
+        lb03 = [ www.twitter.com, 30 ]   
+   }
+   cdnwww => {
+        datacenter1 => {
+          d1-lb1 = [ 8.8.8.8, 2 ]
+          d1-lb2 = [ 8.8.4.4, 2 ]
+        }
+         datacenter2 => {
+          d2-lb1 = [ 4.2.2.1, 2 ]
+          d2-lb2 = [ 4.2.2.2, 2 ]
+          d2-lb3 = [ 4.2.2.3, 1 ]
+        }
+      }   
+}
+metafo =>{
+  resources =>{
+          prod_www => {
+          datacenters => [ dc-03, dc-02, dc-01 ]
+          dcmap => {
+            dc-01 => 8.8.8.8
+            dc-02 => { lb01 => 4.2.2.1, lb02 => 4.2.2.2 }
+            dc-03 => [ 4.2.2.3, 4.2.2.4, 4.2.2.5 ]
+          }
+  }
+}
+}
+}
