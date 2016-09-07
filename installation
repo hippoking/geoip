@@ -36,3 +36,59 @@ MAILTO=your@email.com
 11 0 * * 3 /usr/local/bin/geoipupdate
 # end of crontab
 
+# install gdns dependences
+apt-get install build-essential
+apt-get install g++ cmake git
+apt-get install libev-dev
+apt-get install libunwind8 libunwind8-dev inotify-tools
+apt-get install libsocket6-perl libio-socket-inet6-perl libwww-perl libhttp-daemon-perl 
+
+echo "/usr/local/lib" >> /etc/ld.so.conf.d/usrlocal.conf
+ldconfig
+
+# compile ragel
+cd /tmp
+wget http://www.colm.net/files/ragel/ragel-6.9.tar.gz -O ragel.tar.gz
+tar xf ragel.tar.gz
+cd ragel*
+./configure && make
+make install
+
+#compile liburcu
+cd /tmp
+wget http://www.lttng.org/files/urcu/userspace-rcu-0.9.2.tar.bz2 -O userspace-rcu.tar.bz2
+tar xf userspace-rcu.tar.bz2
+cd userspace-rcu*
+./configure && make
+make install
+
+# compile libmaxminddb
+cd /tmp
+wget https://github.com/maxmind/libmaxminddb/releases/download/1.2.0/libmaxminddb-1.2.0.tar.gz -O libmaxminddb.tar.gz
+tar xf libmaxminddb.tar.gz
+cd libmaxminddb*
+./configure
+make
+make install
+
+# compile gdnsd
+cd /tmp
+wget https://github.com/gdnsd/gdnsd/releases/download/v2.2.4/gdnsd-2.2.4.tar.xz -O gdnsd.tar.xz
+tar xf gdnsd.tar.xz
+cd gdnsd*
+#./configure --prefix=/usr --includedir=/usr/include --mandir=/usr/share/man --infodir=/usr/share/info --sysconfdir=/etc --localstatedir=/var --disable-silent-rules
+./configure
+make && make install
+ldconfig
+
+# add gdnsd user 
+addgroup --system gdnsd
+useradd --system --home /usr/local/var/run/gdnsd -s /usr/sbin/nologin --no-create-home -g gdnsd gdnsd
+
+# file locations
+# command: /usr/local/sbin/gdnsd
+# config: /usr/local/etc/gdnsd
+# zones: /usr/local/etc/gdnsd/zones
+# pid: /usr/local/var/run/gdnsd/gdnsd.pig
+
+
