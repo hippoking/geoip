@@ -1,0 +1,37 @@
+
+NOTE: CentOS 6.8 X64 has a low kernel version and therefore not supported inotify function built-in by gdnsd. 
+Hence we choose Debian 8.X x64 as our prod OS.
+
+Debian Jessie has been shipped with gdnsd 2.1.2-1~deb8u1 which is older than current release. Build from source is our best choice.
+
+The whole installation has been tested on DigitalOcean VPS.
+
+1) install and set up automatic update for geo ip database from maxmind.
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install dh-autoreconf zlib1g-dev git
+sudo apt-get install build-essential libcurl4-openssl-dev
+cd /tmp
+git clone https://github.com/maxmind/geoipupdate
+cd geoipupdate
+./bootstrap
+./configure
+make
+sudo make install
+
+# config file is located at /usr/local/etc/GeoIP.conf
+# edit GeoIP.conf and add following:
+UserId 999999
+LicenseKey 000000000000
+
+ProductIds GeoLite2-City GeoLite2-Country GeoLite-Legacy-IPv6-City GeoLite-Legacy-IPv6-Country 506 517 533
+
+# Database Directory  /usr/local/share/GeoIP
+
+2) add following to your crontab
+# top of crontab
+MAILTO=your@email.com
+
+11 0 * * 3 /usr/local/bin/geoipupdate
+# end of crontab
+
