@@ -1,0 +1,37 @@
+$ORIGIN example.com. 
+$TTL 10800
+@	IN	SOA	devns1.example.com.	hostmaster.example.com. (
+			2016090703 ; serial                     
+			21600      ; refresh after 6 hours                     
+			3600       ; retry after 1 hour                     
+			604800     ; expire after 1 week                     
+			10800 )    ; minimum TTL of 1 day  
+		     
+		           
+	IN	NS	devns1.example.com.       
+	IN	NS	devns2.example.com.        
+	
+	
+			       
+asia	IN	CNAME	www.163.com.        
+us	IN	CNAME	www.yahoo.com.
+reflect 10 DYNA reflect
+reflect-dns 10 DYNA reflect!dns
+reflect-edns 10 DYNA reflect!edns
+reflect-both 10 DYNA reflect!both
+reflect-best 10 DYNA reflect!best
+pointless 42 DYNA static!foo
+pointbar 42 DYNA static!bar
+cdn1 600 DYNA geoip!prod_www
+cdn2 300 DYNA geoip!prod_www
+cdntest 300 DYNA geoip!prod_www
+pubwwwsfo 300 DYNA simplefo!pubwwwsfo
+mixedsfo 300 DYNA simplefo!mixedsfo
+pubwwwsfo2 300 DYNA simplefo!pubwwwsfo
+v4www 300 DYNA multifo!v4www
+corpwww 300 DYNC weighted!corpwww
+mcorpwww 300 DYNC weighted!mcorpwww
+cdnwww 300 DYNA weighted!cdnwww
+wwwmeta 300 DYNA metafo!prod_www
+cdn21 300 DYNA geoip!prod_www
+cdn22 300 DYNA geoip!test_www
