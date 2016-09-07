@@ -8,3 +8,6 @@ https://wikitech.wikimedia.org/wiki/DNS#Installation_steps_for_a_Wikimedia_autho
 
 2) bind zone configuration file explanation in detail
 https://www.centos.org/docs/5/html/Deployment_Guide-en-US/s1-bind-zone.html
+
+3) build configuration
+--disable-silent-rules  verbose build output (undo: "make V=0")
