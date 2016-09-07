@@ -18,6 +18,7 @@ cd geoipupdate
 ./configure
 make
 sudo make install
+mkdir /usr/local/share/GeoIP -p  ## required by default config file
 
 # config file is located at /usr/local/etc/GeoIP.conf
 # edit GeoIP.conf and add following:
