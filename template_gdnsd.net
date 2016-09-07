@@ -1,0 +1,45 @@
+geoip => {
+  maps => { my_map => {
+    geoip_db => /usr/local/var/gdnsd/GeoLiteCityv6.dat,
+    datacenters => [ DAL, EWR ],
+    map => {
+      EU => [ EWR, DAL ]
+      AF => [ EWR, DAL ]
+      AS => {
+        default => [ EWR, DAL ],
+        SG => [ DAL, EWR ],
+        JP => [ DAL, EWR ],
+        KR => [ DAL, EWR ],
+        PH => [ DAL, EWR ],
+        TW => [ DAL, EWR ],
+        HK => [ DAL, EWR ],
+      }
+    }
+  }}
+  resources => {
+    dtmf => {
+      map => my_map,
+      dcmap => {
+        DAL => {
+          addrs_v4 => 69.164.198.85
+          addrs_v6 => 2600:3c00::f03c:91ff:fe96:6a4f
+        },
+        EWR => {
+          addrs_v4 => 69.164.220.36
+          addrs_v6 => 2600:3c03::f03c:91ff:fe96:1282
+        },
+      }
+    }
+    cnsearch => {
+      map => my_map,
+      dcmap => {
+        DAL => www.google.com.
+        EWR => www.yahoo.com.
+      }
+    }
+  }
+}
+
+
+www      600 DYNA geoip!dtmf
+search   600 DYNC geoip!cnsearch
